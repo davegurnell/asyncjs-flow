@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html>
   <head>
@@ -19,8 +20,22 @@ Dave Gurnell<br/><small>[@davegurnell](https://twitter.com/davegurnell)</small>
 
 Hi everyone.
 
-I'm Dave and I'm here to talk about
-static type systems for Javascript:
+I'm Dave.
+
+I'm a developer based here at the Skiff.
+
+I work for this company, Underscore.
+We're nothing to do with the JS library.
+We're a functional programming consultancy.
+
+I spend time working in functional languages like Scala,
+as well as Javascript.
+
+And one really useful thing Scala has
+that Javascript doesn't is static types.
+
+So I'm here to tell you about these things
+and how you can get them in Javascript.
 
 - What are they?
 - Why are they useful?
@@ -38,13 +53,13 @@ class: center, middle
 In particular I'm here to talk about
 a static type tool from Facebook called Flow.
 
-I think Flow will be interesting to most people here for two reasons:
+Flow is interesting to people here because
+it's designed to work well
+with regular Javascript codebases.
 
-1. It's designed to work with regular Javascript projects.
-   You can add it to your codebase and
-   start using static types gradually.
-
-2. It works nicely with React (which is so hot right now).
+You can add it to your codebase and
+start using static types gradually,
+opting into them on a file-by-file basis.
 
 ---
 class: center, middle
@@ -54,8 +69,11 @@ class: center, middle
 1. What are static types?
 2. Closer look at Flow types
 3. Flow command line tools
-4. Using Flow with React
-5. Bigger picture
+4. Summary, bigger picture
+
+--
+
+Interrupt me at any time!
 
 ---
 class: center, middle
@@ -82,10 +100,8 @@ class: center, middle
 - Simple
 - Precise
 - Predictable
-
 - Maintainable
 - Testable
-- Composable
 
 ---
 class: center, middle
@@ -149,6 +165,15 @@ class: center, middle
 class: center, middle
 
 ## This is a **type error**!
+
+---
+class: center, middle
+
+# Static types are...
+
+Constraints we add to our code<br/>
+that allow us to check properties of it<br/>
+without running it
 
 ---
 class: center, middle
@@ -249,6 +274,7 @@ function add(a: number, b: number): Expr {
 }
 
 var answer = add(add(1, 2), 3)
+                 ^^^^^^^^^
 ```
 
 .footnote[expr.js]
@@ -264,6 +290,7 @@ function add(a: Expr, b: Expr): Expr {
 }
 
 var answer = add(add(1, 2), 3)
+                     ^  ^   ^
 ```
 
 .footnote[expr.js]
@@ -290,9 +317,17 @@ var answer = add(add(term(1), term(2)), term(3))
 ---
 class: center, middle
 
-# Static types are...
+# Why care about types?
 
-Facts we know about code without running it
+- Prevent bugs
+- Document behaviour
+- Support for refactoring
+- Other big picture stuff...
+
+---
+class: center, middle
+
+# How static types work
 
 ---
 class: center, middle
@@ -359,44 +394,6 @@ var str = ("abc" + "def" : string)
 ---
 class: center, middle
 
-# Types are removed to produce JS
-
-```js
-// @flow
-
-function greaterThan(a: number, b: number): boolean {
-  return a > b
-}
-
-var sum: number = 1 + 1
-
-var str = ("abc" + "def" : string)
-```
-
-.footnote[annotations.js]
-
----
-class: center, middle
-
-# Types are removed to produce JS
-
-```js
-//
-
-function greaterThan(a        , b        )          {
-  return a > b
-}
-
-var sum         = 1 + 1
-
-var str = ("abc" + "def"         )
-```
-
-.footnote[annotations.js]
-
----
-class: center, middle
-
 # Flow infers types for us
 
 ```js
@@ -441,6 +438,44 @@ var z: number = x + y
 ---
 class: center, middle
 
+# Types are removed to produce JS
+
+```js
+// @flow
+
+function greaterThan(a: number, b: number): boolean {
+  return a > b
+}
+
+var sum: number = 1 + 1
+
+var str = ("abc" + "def" : string)
+```
+
+.footnote[annotations.js]
+
+---
+class: center, middle
+
+# Types are removed to produce JS
+
+```js
+//
+
+function greaterThan(a        , b        )          {
+  return a > b
+}
+
+var sum         = 1 + 1
+
+var str = ("abc" + "def"         )
+```
+
+.footnote[annotations.js]
+
+---
+class: center, middle
+
 # Type errors reveal<br/>possible runtime failures
 
 ```js
@@ -466,25 +501,14 @@ class: center, middle
 
 # However...
 
-- Static types only show *possible* runtime errors
-- They won't find *every* error
+- They sometimes require us to be overcautious
+- They won't find *every* error in our code
 - They don't remove the need for unit tests
 
 ---
 class: center, middle
 
 # A closer look at Flow types
-
----
-class: center, middle
-
-## Flow types are...
-
-- a thin layer on top of ES6/7 (with JSX support)
-- based on the *structure* of data
-- affected by the *flow* of the program
-- *completely removed* during compilation
-- *completely absent* during runtime
 
 ---
 class: center, middle
@@ -509,19 +533,20 @@ var e: void    = undefined
 ---
 class: center, middle
 
-# Built-in types
+# Primitive types
 
 ```js
-var now: Date = new Date(Date.now())
-
-var div: HTMLElement = document.createElement("div")
+var a = true
+var b = "abc"
+var c = 123
 ```
 
---
+```js
+var d = null
+var e = undefined
+```
 
-<small>see also https://github.com/facebook/flow/tree/master/lib</small>
-
-.footnote[builtins.js]
+.footnote[primitives.js]
 
 ---
 class: center, middle
@@ -550,7 +575,7 @@ var favoriteFilm: string | number =
 --
 
 ```js
-if(typeof favoriteFilm == "string") {
+if(typeof favoriteFilm === "string") {
   // ...we know favoriteFilm is a string...
 } else {
   // ...we know favoriteFilm is a number...
@@ -595,7 +620,21 @@ class: center, middle
 # Optional types
 
 ```js
-var elem: HTMLElement = // grab an element from somewhere
+var elem: HTMLElement = // ...
+
+var child =
+  elem.firstChild
+```
+
+.footnote[optional.js]
+
+---
+class: center, middle
+
+# Optional types
+
+```js
+var elem: HTMLElement = // ...
 
 var child: Node | null | void =
   elem.firstChild
@@ -609,7 +648,7 @@ class: center, middle
 # Optional types
 
 ```js
-var elem: HTMLElement = // grab an element from somewhere
+var elem: HTMLElement = // ...
 
 var child: ?Node =
   elem.firstChild
@@ -682,23 +721,6 @@ type Cat = {
   age: number
 }
 
-var cats: Array<Cat> = [
-  { name: "Garfield", age: 38 },
-  { name: "Heathcliff", age: 43 }
-]
-```
-
----
-class: center, middle
-
-# Array types
-
-```js
-type Cat = {
-  name: string,
-  age: number
-}
-
 var cats: Cat[] = [
   { name: "Garfield", age: 38 },
   { name: "Heathcliff", age: 43 }
@@ -711,7 +733,9 @@ class: center, middle
 # Function types
 
 ```js
-type Callback = string => void
+function greet(str: string) {
+  console.log("Hello " + str)
+}
 ```
 
 .footnote[callbacks.js]
@@ -719,38 +743,539 @@ type Callback = string => void
 --
 
 ```js
-var greet: Callback =
-  (str: string) => console.log("Hello " + str)
+function forEveryone(func: string => void) {
+  [ "Async", "Brighton", "World" ].forEach(func)
+}
 ```
 
 --
 
 ```js
-function forEveryone(func: Callback) {
-  [ "Async", "Brighton", "World" ].forEach(func)
-}
-
 forEveryone(greet)
 ```
 
 ---
 class: center, middle
 
-# Function types
+# Other stuff
+
+- Generic types
+- Intersection types
+- Classes and interfaces
+- And much more...
+
+---
+class: center, middle
+
+# Imports and exports
 
 ```js
-function greet(str: string) {
-  console.log("Hello " + str)
+export function add(a: number, b: number): number {
+  return a + b
 }
-
-function forEveryone(func: string => void) {
-  [ "Async", "Brighton", "World" ].forEach(func)
-}
-
-forEveryone(greet)
 ```
 
-.footnote[callbacks.js]
+--
+
+```js
+export type Complex = {
+  real: number,
+  imag: number,
+}
+```
+
+--
+
+```js
+import { type Complex, add } from "./math"
+```
+
+---
+class: center, middle
+
+# Any and mixed
+
+---
+class: center, middle
+
+# Any
+
+```js
+var x: any = // ...
+```
+
+--
+
+```js
+x = 123
+x = "abc"
+```
+
+--
+
+```js
+(x : string) // always works
+```
+
+--
+
+```js
+x.length      // always works
+```
+
+---
+class: center, middle
+
+# Any
+
+```js
+var x: any = // ...
+```
+
+```js
+x = 123
+x = "abc"
+```
+
+```js
+(x : string)
+```
+
+```js
+x.foo.bar.baz
+```
+
+---
+class: center, middle
+
+# Mixed
+
+```js
+var x: mixed = // ...
+```
+
+```js
+x = 123
+x = "abc"
+```
+
+```js
+(x : string)  // can't do this
+```
+
+```js
+x.length      // can't do this
+```
+
+---
+class: center, middle
+
+# Mixed
+
+```js
+var x: mixed = // ...
+```
+
+```js
+x = 123
+x = "abc"
+```
+
+```js
+if(typeof x === "string") {
+  x.length
+}
+```
+
+---
+class: center, middle
+
+# Guess the type and value!
+
+---
+class: center, middle
+
+```js
+"Hello world!".toUpperCase().toLowerCase()
+```
+
+--
+
+```js
+type  : string
+value : "hello world!"
+```
+
+---
+class: center, middle
+
+```js
+console.log("Hello world!")
+```
+
+--
+
+```js
+type  : void
+value : undefined
+```
+
+---
+class: center, middle
+
+```js
+true ? "hello" : 123
+```
+
+--
+
+```js
+type  : string | number
+value : "hello"
+```
+
+---
+class: center, middle
+
+```js
+[ "A", "BC", "DEF" ].map(str => str.length)
+```
+
+--
+
+```js
+type  : number[]
+value : [ 1, 2, 3 ]
+```
+
+---
+class: center, middle
+
+```js
+JSON.parse('{ "name": "Garfield", "age": 38 }')
+```
+
+--
+
+```js
+type  : any
+value : { name: "Garfield", age: 38 }
+```
+
+---
+class: center, middle
+
+```js
+JSON.parse('{ "name": "Gar')
+```
+
+--
+
+```js
+type  : any
+value : No value (exception thrown)
+```
+
+---
+class: center, middle
+
+# Working with Flow
+
+---
+class: center, middle
+
+# Running the type checker
+
+```js
+npm install -g flow
+
+flow init // creates .flowconfig
+
+flow      // checks code, does not compile anything
+```
+
+.footnote[full instructions on http://flow.org]
+
+--
+
+```js
+flow stop // stops type checker server
+```
+
+---
+class: center, middle
+
+# Running in watch mode
+
+```js
+npm install -g flow flow-watch
+
+flow init  // creates .flowconfig
+
+flow-watch // checks continuously
+```
+
+---
+class: center, middle
+
+# Removing type annotations
+
+```js
+npm install -g flow-remove-types
+
+flow-remove-types myfile.js
+```
+
+---
+class: center, middle
+
+# Using third party libraries
+
+- Built-in type definitions
+- Third party definitions with `flow-typed`
+- Custom type definitions
+
+---
+class: center, middle
+
+# Built-in type definitions
+
+```js
+var now: Date = new Date(Date.now())
+
+var div: HTMLElement = document.createElement("div")
+```
+
+.footnote[builtins.js]
+
+--
+
+<small>see also https://github.com/facebook/flow/tree/master/lib</small>
+
+---
+class: center, middle
+
+# Third party libraries
+
+```bash
+npm install -g flow-typed
+
+flow-typed install lodash@4.17.2
+
+flow-typed install
+```
+
+---
+class: center, middle
+
+# Custom type definitions
+
+```js
+declare module "davemath" {
+  declare export var pi: number;
+
+  declare export function average(numbers: number[]): number;
+
+  declare export class Complex {
+    real: number;
+    imag: number;
+    add: (that: Complex): Complex;
+    // and so on...
+  }
+}
+```
+
+---
+class: center, middle
+
+# The bigger picture
+
+---
+class: center, middle
+
+# Static types...
+
+- Assertions on our code
+- Checked without running the code
+
+---
+class: center, middle
+
+# Static types...
+
+- Help prevent bugs
+- Help document code
+- Help with refactoring
+- Increase precision and predictability
+
+---
+class: center, middle
+
+# Static types...
+
+- Require some manual work
+- Don't predict all bugs in code
+- Don't obviate the need for unit tests
+
+---
+class: center, middle
+
+# Starting with Flow
+
+- Use type annotations liberally
+- Get used to type checker limitations
+- Opt in gradually
+- Be prepared to refactor
+- Beware of `any`!
+
+---
+class: center, middle
+
+# Building complex software
+
+- Simple
+- Precise
+- Predictable
+- Referentially transparent
+- Composable
+- Statically typed
+
+---
+class: center, middle
+
+# If you're interested...
+
+- [Elm](http://elm-lang.org)
+- [Swift](https://swift.org)
+- [Typescript](http://www.typescriptlang.org)
+- [Purescript](http://www.purescript.org)
+- [Creative Scala](https://underscore.io/books/creative-scala)
+- [Functional Brighton](https://meetup.com/functional-brighton)
+
+---
+class: center, middle
+
+# Thank you!
+
+Dave Gurnell<br/>
+[@davegurnell](https://twitter.com/davegurnell)
+
+https://github.com/davegurnell/asyncjs-flow
+
+.underscore-brand[![Underscore](underscore-logo.png)]
+
+---
+class: center, middle
+
+# Extra slides
+
+---
+class: center, middle
+
+# Using Flow with React
+
+- Statically typed components
+- Statically typed reducers
+
+---
+class: center, middle
+
+# Statically typed components
+
+---
+class: center, middle
+
+```js
+type Props = {
+  label: string,
+  onchange: boolean => void
+}
+
+type State = {
+  pressed: boolean
+}
+```
+
+--
+
+```js
+class Button extends React.Component<Props, State> {
+  state = { pressed: false }
+
+  handleClick = () => {
+    this.setState(...) // and so on...
+  }
+
+  render() {
+    return <button onclick={this.handleClick}>
+      {this.props.label}
+    </button>
+  }
+}
+```
+
+---
+class: center, middle
+
+# Statically typed components
+
+```js
+<ToggleButton
+  label="This is a label"
+  onclick={clickHandler}
+/>
+```
+
+.footnote[react-component.js]
+
+---
+class: center, middle
+
+# Statically typed reducers<br/><small>(discriminated union types)</small>
+
+---
+class: center, middle
+
+```js
+type State = { contacts: Contact[] }
+```
+
+--
+
+```js
+const UPDATE = "contact/UPDATE"
+const DELETE = "contact/DELETE"
+
+type Action =
+  | { type: "contact/UPDATE", contact: Contact }
+  | { type: "contact/DELETE", id: number }
+```
+
+--
+
+```js
+function reducer(state: State, action: Action): State {
+  switch(action.type) {
+    case UPDATE: // action.contact is visible here
+    case DELETE: // action.id is visible here
+    default:     // and so on...
+  }
+}
+```
+
+.footnote[react-reducer.js]
+
+
+
+
+
+
+
+
+
+
+
+
 
 ---
 class: center, middle
@@ -863,402 +1388,6 @@ var content: HTMLElement | null = // ...
 var child: ?Node =
   content && content.firstChild
 ```
-
----
-class: center, middle
-
-# Any and mixed
-
-```js
-var x: any   = // ...
-var y: mixed = // ...
-```
-
---
-
-```js
-x = 123   // this is fine
-
-y = "abc" // this is fine
-```
-
----
-class: center, middle
-
-# Any and mixed
-
-```js
-var x: any   = // ...
-var y: mixed = // ...
-```
-
-```js
-console.log(x.foo) // this is fine
-
-console.log(y.foo) // can't do this
-```
-
----
-class: center, middle
-
-# Other stuff
-
-- Generic types
-- Intersection types
-- Classes and interfaces
-- Importing and exporting types
-- And much more...
-
----
-class: center, middle
-
-# Guess the type and value!
-
----
-class: center, middle
-
-```js
-"Hello world!".toUpperCase().toLowerCase()
-```
-
---
-
-```js
-type  : string
-value : "hello world!"
-```
-
----
-class: center, middle
-
-```js
-console.log("Hello world!")
-```
-
---
-
-```js
-type  : void
-value : undefined
-```
-
----
-class: center, middle
-
-```js
-true ? "hello" : 123
-```
-
---
-
-```js
-Type  : string | number
-Value : "hello"
-```
-
----
-class: center, middle
-
-```js
-[ "A", "BC", "DEF" ].map(str => str.length)
-```
-
---
-
-```js
-Type  : number[]
-Value : [ 1, 2, 3 ]
-```
-
----
-class: center, middle
-
-```js
-JSON.parse('{ "name": "Garfield", "age": 38 }')
-```
-
---
-
-```js
-type  : Object
-value : { name: "Garfield", age: 38 }
-```
-
----
-class: center, middle
-
-```js
-JSON.parse('{ "name": "Gar')
-```
-
---
-
-```js
-type  : Object
-value : No value (exception thrown)
-```
-
----
-class: center, middle
-
-# Working with Flow
-
----
-class: center, middle
-
-# Flow command line tools
-
-- Installation<br/>`flow` / `flow-bin`
-- Configuration<br/>`flow init` / `.flowconfig`
-- Type checking<br/>`flow` / `flow-watch`
-- Compilation<br/>`flow-remove-types`
-
----
-class: center, middle
-
-# Third party libraries
-
-- Third party definitions with `flow-typed`
-- Custom type definitions
-
----
-class: center, middle
-
-# Third party libraries
-
-```js
-declare module "my-math-module" {
-  declare export var pi: number;
-
-  declare export function average(numbers: number[]): number;
-
-  declare export class Complex {
-    real: number;
-    imag: number;
-    add: (that: Complex): Complex;
-    // and so on...
-  }
-}
-```
-
----
-class: center, middle
-
-# Using Flow with React
-
----
-class: center, middle
-
-# Components<br/><small>(checked classes and JSX)</small>
-
----
-class: center, middle
-
-```js
-type Props = {
-  label: string,
-  onchange: boolean => void
-}
-
-type State = {
-  pressed: boolean
-}
-
-class ToggleButton extends React.Component<Props, State> {
-  state = { pressed: false }
-
-  handleClick = () => { /* and so on */ }
-
-  render() { /* and so on */ }
-}
-```
-
---
-
-```js
-<ToggleButton
-  label="This is a label"
-  onclick={clickHandler}
-/>
-```
-
-.footnote[react-component.js]
-
----
-class: center, middle
-
-# Reducers<br/><small>(discriminated union types)</small>
-
----
-class: center, middle
-
-```js
-type State = { contacts: Contact[] }
-```
-
---
-
-```js
-const UPDATE = "contact/UPDATE"
-const DELETE = "contact/DELETE"
-
-type Action =
-  | { type: "contact/UPDATE", contact: Contact }
-  | { type: "contact/DELETE", id: number }
-```
-
---
-
-```js
-function reducer(state: State, action: Action): State {
-  switch(action.type) {
-    case UPDATE: // action.contact is visible here
-    case DELETE: // action.id is visible here
-    default:     // and so on...
-  }
-}
-```
-
-.footnote[react-reducer.js]
-
----
-class: center, middle
-
-# The bigger picture
-
-- Static types are a way of verifying properties of your code without running it.
-  This is useful for avoiding large classes of bugs
-  (e.g. null/undefined references, idiosyncratic corner cases such as `string * string`)
-
-- Static types are weak compared to the full power of the programming language.
-  They don't guarantee your code is completely correct.
-  However, they do give a lot of safety.
-  And you can work with them, using type annotations liberally to maximise safety.
-
-- Earlier I said static types are good for three things:
-
-  - Avoiding bugs
-  - Documenting behaviour/intent
-  - Simplifying refactoring
-
-  I also believe they are a crucial tool for creating complex programs
-  from simple, reliable building blocks.
-  The things we need are:
-
-  - Composition
-  - Closure
-  - Referential transparency (equational reasoning)
-  - Static types
-
-- In order to use static types effetively,
-  we sometimes need to modify the way we work.
-  It's harder to do meta-programming, for example.
-
-- Static types have a bad name because of languages like Java and C#,
-  where you have to declare types but the compiler does little to infer them
-
-- However, modern static type systems are not like this.
-  Modern compilers infer types to do a lot of the work for you.
-
-- Sophisticated type systems have been around for ages
-  in less mainstream languages like Haskell and Scala.
-
-  - We're now seeing these languages gaining in popularity
-    because people are beginning to appreciate the power of types
-    (see Scala specifically).
-
-  - We're also seeing the rise of static type systems in more familiar-feeling languages:
-    Typescript, Elm, Swift, and Flow are great examples of these.
-
-- Because Flow is designed as a checker only,
-  it is necessarily limited in what it can do.
-  In other languages like Scala, we can use types to drive the compiler.
-  We can actually generate code based on types.
-
-
-
-
-
-
-
-
-
-
-
----
-
----
-class: center, middle
-
-## Building complex software
-
-- Composition
-- Closure
-- Referential transparency
-- Static types
-
----
-class: center, middle
-
-```js
-function square(n) {
-  return n * n;
-}
-
-square("2");
-```
-
----
-class: center, middle
-
-![Scala lego](scala-lego.jpg)
-
-.footnote[![&copy; 2012 Neil Coulter CC-BY-SA](https://www.flickr.com/photos/ethnosax/8561305524)]
-
----
-class: center, middle
-
-![Javascript lego](js-lego.jpg)
-
-.footnote[![&copy; 2013 Pascal PD](https://www.flickr.com/photos/pasukaru76/9824401426)]
-
----
-class: center, middle
-
-```js
-function double(n) {
-  return n + n;
-}
-
-var answer = double("2")
-```
-
-???
-
-Notice that we've changed the function
-from `n * 2` to `n + n`.
-
-Let's ask the same questions:
-
-1. What does the code do?
-2. Is the function "correct"?
-3. Is the behaviour what the programmer intended?
-
---
-class: center, middle
-
-```js
-answer == "22"
-```
-
-???
-
-The answer is `"22"` now,
-but this time it's a string.
-
-Again, so we think this is what the programmer intended?
-
-I think we can reasonably say two things about these examples...
 
     </textarea>
     <!-- ==================================== -->

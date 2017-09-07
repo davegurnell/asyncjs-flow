@@ -814,13 +814,7 @@ x = "abc"
 --
 
 ```js
-(x : string) // always works
-```
-
---
-
-```js
-x.length      // always works
+x.foo         // always works, type any
 ```
 
 ---
@@ -838,11 +832,13 @@ x = "abc"
 ```
 
 ```js
-(x : string)
+x.foo.bar.baz // always works, type any
 ```
 
+--
+
 ```js
-x.foo.bar.baz
+(x : string)  // always works, type string
 ```
 
 ---
@@ -860,11 +856,11 @@ x = "abc"
 ```
 
 ```js
-(x : string)  // can't do this
+x.length      // can't do this
 ```
 
 ```js
-x.length      // can't do this
+(x : string)  // can't do this
 ```
 
 ---
@@ -883,7 +879,7 @@ x = "abc"
 
 ```js
 if(typeof x === "string") {
-  x.length
+  // we know x is a string here...
 }
 ```
 
@@ -938,20 +934,6 @@ value : "hello"
 class: center, middle
 
 ```js
-[ "A", "BC", "DEF" ].map(str => str.length)
-```
-
---
-
-```js
-type  : number[]
-value : [ 1, 2, 3 ]
-```
-
----
-class: center, middle
-
-```js
 JSON.parse('{ "name": "Garfield", "age": 38 }')
 ```
 
@@ -973,7 +955,36 @@ JSON.parse('{ "name": "Gar')
 
 ```js
 type  : any
-value : No value (exception thrown)
+value : No value (runtime error)
+```
+
+---
+class: center, middle
+
+```js
+((123 : any) : string).length
+```
+
+--
+
+```js
+type  : number
+value : No value (runtime error)
+```
+
+---
+class: center, middle
+
+```js
+((123 : mixed) : string).length
+```
+
+```js
+Error: example.js:1
+ 1: ((123 : mixed) : string).length
+            ^^^^^ mixed. This type is incompatible with
+ 1: ((123 : mixed) : string).length
+                     ^^^^^^ string
 ```
 
 ---
@@ -995,6 +1006,12 @@ flow      // checks code, does not compile anything
 ```
 
 .footnote[full instructions on http://flow.org]
+
+--
+
+```js
+flow      // checks code, does not compile anything
+```
 
 --
 
@@ -1145,11 +1162,9 @@ class: center, middle
 
 # If you're interested...
 
+- [Creative FP Talk](https://asyncjs.com/creative-functional-programming/)
 - [Elm](http://elm-lang.org)
-- [Swift](https://swift.org)
-- [Typescript](http://www.typescriptlang.org)
-- [Purescript](http://www.purescript.org)
-- [Creative Scala](https://underscore.io/books/creative-scala)
+- [Creative Scala + Scala Books](https://underscore.io/books)
 - [Functional Brighton](https://meetup.com/functional-brighton)
 
 ---
@@ -1387,6 +1402,12 @@ var content: HTMLElement | null = // ...
 ```js
 var child: ?Node =
   content && content.firstChild
+
+---
+class: center, middle
+
+# The End
+
 ```
 
     </textarea>

@@ -1,11 +1,10 @@
 // @flow
 
-type Callback = string => void
+function greet(str: string) {
+  console.log("Hello " + str)
+}
 
-var greet: Callback =
-  (str: string) => console.log("Hello " + str)
-
-function forEveryone(func: Callback) {
+function forEveryone(func: string => void) {
   [ "Async", "Brighton", "World" ].forEach(func)
 }
 

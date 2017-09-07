@@ -8,6 +8,6 @@
   "license": "Apache 2.0",
   "dependencies": {},
   "devDependencies": {
-    "flow-bin": "^0.54.0"
+    "flow-bin": "0.54.1"
   }
 }

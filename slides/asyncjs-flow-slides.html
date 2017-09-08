@@ -73,6 +73,8 @@ class: center, middle
 
 --
 
+<br/>
+
 Interrupt me at any time!
 
 ---
@@ -224,7 +226,7 @@ No errors!
 ---
 class: center, middle
 
-# Why care about<br/>static types?
+# Benefits of static types
 
 ---
 class: center, middle
@@ -486,24 +488,14 @@ content.innerHTML += "<p>Good night and good luck</p>"
 
 .footnote[errors.js]
 
---
-
-```js
-function getElementById(id: string): HTMLElement | null {
-  // ...
-}
-```
-
-.footnote[errors.js]
-
 ---
 class: center, middle
 
-# However...
+# In other words...
 
-- They sometimes require us to be overcautious
-- They won't find *every* error in our code
-- They don't remove the need for unit tests
+- We sometimes have to be overcautious
+- Types don't find *every* error in our code
+- Types don't remove the need for unit tests
 
 ---
 class: center, middle
@@ -1424,7 +1416,10 @@ class: center, middle
           scroll: false,
           touch: false,
           click: false
-        }
+        },
+        slideNumberFormat: function (current, total) {
+          return current;
+  }
       });
     </script>
   </body>
